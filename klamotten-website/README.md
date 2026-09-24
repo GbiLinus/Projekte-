@@ -1,11 +1,39 @@
 # Klamotten-Website
 
-Neue Website für eine Kleidungsmarke. Status: **Planung**, noch kein Code.
+Online-Shop für eine Kleidungsmarke im Stil von Luxus-Websites: ruhig, viel Weißraum, Serifen-Überschriften, kleine Monospace-Details (angelehnt an die IGLOO-Referenz unten). Status: **Schritt 1 fertig: die Website funktioniert.** Die Näh-Animation kommt ganz am Ende.
 
-## Reihenfolge (wichtig)
+Lokal ansehen: `index.html` im Browser öffnen, oder im Ordner `python3 -m http.server` starten und `http://localhost:8000` aufrufen.
 
-1. **Erst die Website, die richtig funktioniert.** Sie muss alle Zwecke erfüllen: Produkte zeigen, Größen und Varianten, Warenkorb und Kauf (oder Anfrage), Über uns, Kontakt, Impressum und Datenschutz, mobil nutzbar, schnell.
-2. **Erst ganz am Ende die große Animation.** Ein Kleidungsstück, das später ausgesucht wird, soll im **Nähvorgang** gezeigt werden, in der Art der Referenz unten. Die Animation ist ein Extra und darf die Funktion der Seite nicht bremsen.
+## Was schon funktioniert
+
+| Bereich | Datei | Funktionen |
+|---|---|---|
+| Startseite | `index.html` | Hero, Kategorien, Neuheiten, Atelier-Teil, Klassiker, Versprechen, Newsletter |
+| Kollektion | `shop.html` | Kategorien, Neuheiten, Filter (Farbe, Größe, Preis), Sortierung, Suche (`?q=`), Filter bleiben in der URL |
+| Produktseite | `produkt.html?id=…` | 3 Bilder mit Zoom, Farbwahl, Größenwahl (ausverkaufte Größen gesperrt), Größentabelle, Merkliste, Details, ähnliche Artikel |
+| Warenkorb | Schublade + `warenkorb.html` | Menge ändern, entfernen, auf die Merkliste verschieben, Rabattcode (`WILLKOMMEN10` = 10 %), Geschenkverpackung, Anzeige bis zum Gratisversand |
+| Kasse | `kasse.html` | Kontakt, Adresse mit Prüfung (auch PLZ je Land), Standard/Express, Zahlungsart, AGB-Pflichthaken, Button „Zahlungspflichtig bestellen“, Bestellbestätigung mit Nummer |
+| Merkliste | `merkliste.html` | Herz auf jeder Karte und Produktseite |
+| Suche | Overlay im Header | Live-Ergebnisse über Name, Kategorie, Farbe, Material |
+| Service | `service.html`, `kontakt.html` | Versand, Rückgabe, Zahlung, Größentabelle, FAQ, Kontaktformular mit Prüfung |
+| Rechtliches | `impressum.html`, `datenschutz.html`, `agb.html`, `widerruf.html` | **Entwürfe mit gelb markierten Platzhaltern** |
+
+Warenkorb und Merkliste bleiben im Browser gespeichert (Local Storage), auch über mehrere Tabs. Die Seite funktioniert auf dem Handy, und Schriften werden lokal geladen (keine Verbindung zu Google, wichtig für die DSGVO).
+
+## Anpassen
+
+- **Markenname:** in `assets/data.js` → `SHOP.brand` (Platzhalter „ATELIER“). Er erscheint dann überall.
+- **Produkte, Preise, Farben, Größen, ausverkaufte Größen:** alles in `assets/data.js`.
+- **Versandkosten, Gratisversand-Grenze, Rabattcodes:** `SHOP` in `assets/data.js`.
+- **Produktbilder:** sind vorerst gezeichnete SVG-Platzhalter (`assets/garments.js`). Sobald es Fotos gibt, werden sie ersetzt.
+
+## Was vor dem echten Start noch fehlt
+
+1. Markenname, Logo, echte Produktfotos und Texte
+2. Zahlung und Bestellungen wirklich abwickeln, z. B. mit Shopify (Storefront API), Stripe Checkout oder Snipcart. Aktuell ist das ein **Testbetrieb**: Es wird nichts abgebucht und nichts versendet.
+3. Kontakt- und Newsletterformular an einen Dienst anbinden
+4. Impressum, Datenschutz, AGB und Widerruf mit echten Angaben füllen und prüfen lassen
+5. **Zum Schluss:** die Näh-Animation (siehe unten)
 
 ## Referenz: „IGLOO“-Website (TikTok von @webhyped)
 
