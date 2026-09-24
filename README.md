@@ -8,4 +8,6 @@ Sammlung aller Projekte, die mit Claude erstellt wurden. Jedes Projekt liegt in 
 | mein-plugin | [`mein-plugin/`](mein-plugin/) | 24.09.2026 | Beispiel-Plugin für Claude Code (Befehl, Skill, Agent, Hook). Installation: `/plugin marketplace add GbiLinus/Projekte-` und `/plugin install mein-plugin@gbilinus-plugins`. |
 | Sölden – Wir kommen! (Website) | [`homepage/`](homepage/) | 24.09.2026 | Blau-weiße Winter-Website mit Schneefall, Lichterkette und den 25 Sölden-Ideen, Beispielwoche und Checkliste. Live: https://gbilinus.github.io/Projekte-/homepage/ · Neu erzeugen nach Änderungen am Guide: `python3 homepage/build.py` |
 
-Nicht hier: Die Kommunalwahl 2026 ist ein eigenes Projekt im Repository `kommunalwahl-2026`.
+Nicht hier:
+- Die Kommunalwahl 2026 ist ein eigenes Projekt im Repository `kommunalwahl-2026`.
+- Der Klamotten-Shop liegt im eigenen Repository [`Shop.Linus`](https://github.com/GbiLinus/Shop.Linus).
