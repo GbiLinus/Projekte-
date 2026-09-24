@@ -315,6 +315,103 @@
   }
   .checkliste a { color: var(--blau); }
 
+
+  /* ---------- Spielereien ---------- */
+  .nr { border: 0; cursor: pointer; font-family: inherit; transition: transform .15s ease, background .2s ease; }
+  .nr:hover { transform: scale(1.1); }
+  .karte.erledigt { opacity: .6; border-top-color: #2e8b57; }
+  .karte.erledigt .nr { background: #2e8b57; }
+  .karte.erledigt .nr { font-size: 0; }
+  .karte.erledigt .nr::after { content: "✓"; font-size: 1.1rem; }
+  .karte.erledigt h4 { text-decoration: line-through; }
+  .karte:hover { transform: translateY(-3px) rotate(-0.3deg); }
+  .karte { transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease; }
+  .karte.gewinner { animation: leuchten 1.2s ease-in-out 3; }
+  @keyframes leuchten {
+    50% { box-shadow: 0 0 0 6px var(--gold), 0 0 40px var(--gold); transform: scale(1.03); }
+  }
+
+  .spielzeug {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 28px;
+  }
+  .spielzeug button {
+    font: inherit;
+    font-weight: 700;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 22px;
+    cursor: pointer;
+    background: var(--navy);
+    color: var(--weiss);
+    box-shadow: 0 4px 14px rgba(11, 42, 85, .2);
+    transition: transform .15s ease;
+  }
+  .spielzeug button:hover { transform: translateY(-2px) rotate(-1deg); }
+  .spielzeug .zaehler { color: var(--soft); font-weight: 600; }
+
+  .countdown {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, .3);
+    font-weight: 600;
+    font-size: .95rem;
+  }
+
+  .schnee-knopf {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 60;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 0;
+    font-size: 1.4rem;
+    cursor: pointer;
+    background: var(--weiss);
+    box-shadow: 0 4px 16px rgba(11, 42, 85, .3);
+  }
+  .schnee-knopf[aria-pressed="false"] { opacity: .55; }
+
+  .klick-flocke {
+    position: fixed;
+    pointer-events: none;
+    z-index: 70;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(27, 95, 174, .7);
+    animation: platzen .9s ease-out forwards;
+  }
+  @keyframes platzen {
+    to { transform: translate(var(--dx), var(--dy)) rotate(180deg); opacity: 0; }
+  }
+
+  .skifahrer {
+    position: fixed;
+    left: -80px;
+    z-index: 80;
+    font-size: 3rem;
+    pointer-events: none;
+    animation: abfahrt 3s cubic-bezier(.5, 0, .7, 1) forwards;
+  }
+  @keyframes abfahrt {
+    0%   { transform: translate(0, 0) rotate(0); }
+    100% { transform: translate(calc(100vw + 160px), 45vh) rotate(20deg); }
+  }
+  .ski-hinweis { font-size: .8rem; opacity: .7; margin-top: 10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .karte.gewinner { animation: none; box-shadow: 0 0 0 6px var(--gold); }
+    .klick-flocke, .skifahrer { display: none; }
+  }
+
   footer {
     background: var(--navy);
     color: rgba(255, 255, 255, .75);
@@ -344,6 +441,7 @@
 <body>
 
 <div class="schnee" aria-hidden="true"></div>
+<button class="schnee-knopf" id="schneeKnopf" type="button" aria-pressed="true" title="Schneefall an/aus">❄️</button>
 
 <header class="hero">
   <div class="lichter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -356,10 +454,12 @@
     </ul>
   </nav>
   <div class="hero-text">
-    <div class="ski" aria-hidden="true">⛷️🎿❄️</div>
+    <div class="ski"><span id="skiStart" role="button" tabindex="0" aria-label="Skifahrer starten" style="cursor:pointer">⛷️</span>🎿❄️</div>
     <h1>Sölden – Wir kommen!</h1>
     <p>Skiurlaub im Ötztal zwischen Dezember und Februar: 25 besondere Ideen mit Plan B, eine Beispielwoche und alles, was wir vorher buchen müssen.</p>
     <a class="button" href="#ideen">Zu den 25 Ideen ❄</a>
+    <div class="countdown" id="countdown" hidden></div>
+    <p class="ski-hinweis">Tipp: Tippe irgendwo „ski“ ein oder klick auf ⛷️.</p>
   </div>
 </header>
 <svg class="huegel" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
@@ -370,6 +470,10 @@
   <section id="ideen">
     <h2>25 Ideen für Sölden</h2>
     <p class="unterzeile">✅ im Winter belegt · ⚠️ vorher prüfen oder reservieren · € bis €€€€ grobe Preisklasse. Jede Idee hat einen Plan B für Sturm, Nebel oder volle Hütten.</p>
+    <div class="spielzeug">
+      <button type="button" id="zufall">🎲 Was machen wir heute?</button>
+      <span class="zaehler" id="zaehler">0 von 25 erledigt</span>
+    </div>
     <nav class="sprung" aria-label="Kategorien">
       <a href="#kat-piste">⛷️ Piste</a>
       <a href="#kat-freeride">🏔️ Freeride</a>
@@ -380,8 +484,8 @@
     </nav>
 <div class="kategorie" id="kat-piste"><h3><span class="icon">⛷️</span>Piste</h3><div class="karten">
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">1</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-1">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">1</button><span class="budget">€€</span></div>
   <h4>BIG3-Rally als Gipfeltag</h4>
   <p class="wo">📍 Über Gaislachkogl, Tiefenbachkogl und Schwarze Schneid.</p>
   <p>Rund 50 km und 10.000 Höhenmeter verbinden die drei Gipfel; geübte Fahrer brauchen etwa vier Stunden. Teilt euch in Rollen für Route, Fotos und Gruppenwertung.</p>
@@ -390,8 +494,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding/highlights-in-the-ski-area/big3-viewing-platforms-rally" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">2</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-2">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">2</button><span class="budget">€€</span></div>
   <h4>BIG3-Aussichtsplattformen sammeln</h4>
   <p class="wo">📍 Plattformen am Gaislachkogl, Tiefenbachkogl und an der Schwarzen Schneid.</p>
   <p>Macht aus den drei Plattformen eine Gipfelmission: Jede Zweiergruppe übernimmt einen Fotowinkel und kürt später das beste Panorama.</p>
@@ -400,8 +504,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding/highlights-in-the-ski-area/big3-viewing-platforms-rally" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">3</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-3">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">3</button><span class="budget">€€</span></div>
   <h4>Zwei-Gletscher-Skitag</h4>
   <p class="wo">📍 Rettenbach- und Tiefenbachgletscher.</p>
   <p>Zwei Gletscherbereiche geben dem Tag ein hochalpines Ziel; stimmt in der Gruppe ab, welcher zuerst angefahren wird.</p>
@@ -410,8 +514,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">4</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-4">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">4</button><span class="budget">€€</span></div>
   <h4>Winter Challenge als Teamliga</h4>
   <p class="wo">📍 Disziplinen der Sölden Winter Challenge.</p>
   <p>Bei 18–19 Disziplinen kann eine Person die Wertung führen und eine andere Fotos und Videos sammeln; vergleicht anschließend eure Läufe.</p>
@@ -420,8 +524,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding/highlights-in-the-ski-area/soelden-winter-challenge" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">5</span><span class="budget">€</span></div>
+<article class="karte" id="idee-5">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">5</button><span class="budget">€</span></div>
   <h4>Skimovie-Lauf mit Gruppenwertung</h4>
   <p class="wo">📍 Skimovie-Anlage im Skigebiet.</p>
   <p>Das kostenlose Video hält jeden Lauf fest; stimmt danach über sauberste Linie und mutigsten Lauf ab.</p>
@@ -430,8 +534,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding/highlights-in-the-ski-area/soelden-winter-challenge" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">6</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-6">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">6</button><span class="budget">€€</span></div>
   <h4>Rettenbach-Weltcuphang nach Freigabe</h4>
   <p class="wo">📍 Rettenbach-Weltcuphang am Gletscher.</p>
   <p>Start auf 3.040 m und bis etwa 65 % Gefälle machen ihn zum markanten Prüfstück; nur wer sich sicher fühlt, fährt mit.</p>
@@ -440,8 +544,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding/rettenbach-glacier" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">7</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-7">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">7</button><span class="budget">€€</span></div>
   <h4>Snowpark- und Funslope-Challenge</h4>
   <p class="wo">📍 Snowpark oder Funslopes im Skigebiet.</p>
   <p>Lost aus, wer zuerst fährt und wer die nächste spielerische Challenge erfindet.</p>
@@ -452,8 +556,8 @@
 </div></div>
 <div class="kategorie" id="kat-freeride"><h3><span class="icon">🏔️</span>Freeride</h3><div class="karten">
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">8</span><span class="budget">€€€€</span></div>
+<article class="karte" id="idee-8">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">8</button><span class="budget">€€€€</span></div>
   <h4>Geführter Freeride-Tag</h4>
   <p class="wo">📍 Freeridegebiet Sölden mit zertifiziertem Guide.</p>
   <p>Abfahrten können bis zu 2.000 Höhenmeter umfassen; Guide legt Route und Sammelpunkte nach Können und Lage fest.</p>
@@ -462,8 +566,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/skiing-snowboarding/highlights-in-the-ski-area/freeriding" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">9</span><span class="budget">€€€</span></div>
+<article class="karte" id="idee-9">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">9</button><span class="budget">€€€</span></div>
   <h4>Einsteiger-Freeride mit Guide</h4>
   <p class="wo">📍 Mögliche Einstiege Hainbachjoch oder Giggijoch, nur nach Guide-Einschätzung.</p>
   <p>Der Guide beurteilt Können und Lage; die Gruppe bleibt beisammen und übt den Umgang mit LVS-Gerät, Schaufel und Sonde.</p>
@@ -472,8 +576,8 @@
   <p class="quelle"><a href="https://www.freeride-soelden.com/en" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">10</span><span class="budget">€€€€</span></div>
+<article class="karte" id="idee-10">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">10</button><span class="budget">€€€€</span></div>
   <h4>Privater Freeride-Guide</h4>
   <p class="wo">📍 Private Guide über die Skischule Sölden-Hochsölden.</p>
   <p>Eine private Führung lässt sich auf die eigene Freundesgruppe abstimmen. LVS-Gerät, Schaufel, Sonde und empfohlener Airbag mitnehmen; Lawinenlage entscheidet über die Route.</p>
@@ -484,8 +588,8 @@
 </div></div>
 <div class="kategorie" id="kat-genuss"><h3><span class="icon">🧀</span>Genuss</h3><div class="karten">
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">11</span><span class="budget">€€€€</span></div>
+<article class="karte" id="idee-11">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">11</button><span class="budget">€€€€</span></div>
   <h4>Ötztaler Stube als Gruppenabend</h4>
   <p class="wo">📍 Ötztaler Stube im Hotel Das Central.</p>
   <p>Ein Michelin-Stern und vier Hauben geben dem Essen Anlasscharakter; reserviert einen Abend als Gruppenhöhepunkt.</p>
@@ -494,8 +598,8 @@
   <p class="quelle"><a href="https://www.central-soelden.com/en/gourmet/culinary-and-wine/oetztaler-stube.html" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">12</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-12">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">12</button><span class="budget">€€</span></div>
   <h4>Gampe Thaya: eigene Käse- und Speckproduktion</h4>
   <p class="wo">📍 Gampe Thaya und Gampe Ladele.</p>
   <p>Käse, Speck und Wurst stammen aus eigener Herstellung; bestellt eine gemeinsame Jause und lasst jede Person den Favoriten wählen.</p>
@@ -504,8 +608,8 @@
   <p class="quelle"><a href="https://www.gampethaya.at/koestlichkeiten" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">13</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-13">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">13</button><span class="budget">€€</span></div>
   <h4>Hüttenrunde mit Verkostungsmotto</h4>
   <p class="wo">📍 Gampe Alm an Piste 11 oder Rotkogelhütte mit Sonnenterrasse.</p>
   <p>Lost den ersten Hüttenstopp aus und vergebt Punkte für Aussicht und Einkehr.</p>
@@ -514,8 +618,8 @@
   <p class="quelle"><a href="https://www.snowplaza.de/weblog/10827-besondere-skihuetten-in-soelden/" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">14</span><span class="budget">€€€€</span></div>
+<article class="karte" id="idee-14">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">14</button><span class="budget">€€€€</span></div>
   <h4>ice Q als bestätigungsabhängige Mittagseinkehr</h4>
   <p class="wo">📍 ice Q am Gaislachkogl.</p>
   <p>Der Bond-Drehort wäre ein besonderer gemeinsamer Lunch-Stopp, aber nur nach bestätigter Winteröffnung; veröffentlicht sind bisher nur Sommerzeiten.</p>
@@ -524,8 +628,8 @@
   <p class="quelle"><a href="https://www.iceq.at/en/" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">15</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-15">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">15</button><span class="budget">€€</span></div>
   <h4>Wirtshaus Giggijoch an der Bergstation</h4>
   <p class="wo">📍 Wirtshaus Giggijoch an der Bergstation der Giggijochbahn.</p>
   <p>Die Bergstation ist ein klarer Treffpunkt für eine gemeinsame Pause; bestimmt vorher, wer die Einkehr auswählt und wer danach die Abfahrt ansagt.</p>
@@ -536,8 +640,8 @@
 </div></div>
 <div class="kategorie" id="kat-après"><h3><span class="icon">🍻</span>Après</h3><div class="karten">
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">16</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-16">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">16</button><span class="budget">€€</span></div>
   <h4>Katapult und Indoor-Eisbar</h4>
   <p class="wo">📍 Katapult nahe der Talstation Giggijochbahn.</p>
   <p>Die erste Indoor-Eisbar der Alpen ist ein ungewöhnlicher Après-Stopp; stimmt ab, wer den Ort am treffendsten beschreibt.</p>
@@ -546,8 +650,8 @@
   <p class="quelle"><a href="https://www.katapult-soelden.com/en.html" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">17</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-17">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">17</button><span class="budget">€€</span></div>
   <h4>Eugen&#x27;s Obstlerhütte mit Musik</h4>
   <p class="wo">📍 An Piste 21/22 bei Eugen&#x27;s Obstlerhütte.</p>
   <p>Rustikale Hütte mit Live- oder Partymusik; verteilt in der Gruppe die Rollen Musikwunsch, Mitsingen und Heimwegplanung.</p>
@@ -556,8 +660,8 @@
   <p class="quelle"><a href="https://www.obstlerhuette.at/" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">18</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-18">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">18</button><span class="budget">€€</span></div>
   <h4>DJ-Stopp in der Schirmbar</h4>
   <p class="wo">📍 Runde Glas-Bar nahe der Talstation Giggijochbahn.</p>
   <p>DJ-Betrieb liefert den Anlass für einen gemeinsamen Songwunsch pro Person, bevor ihr weiterzieht.</p>
@@ -566,8 +670,8 @@
   <p class="quelle"><a href="https://www.jaggedhorizons.com/corporate-ski-trips/austria/solden/apres-ski/" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">19</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-19">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">19</button><span class="budget">€€</span></div>
   <h4>Terrassenstopp an der Giggi Tenne</h4>
   <p class="wo">📍 Giggi Tenne neben der Giggijochbahn.</p>
   <p>Die große Terrasse eignet sich für eine gemeinsame Pause; vergleicht dort eure Tageslinien und bestimmt den nächsten Stopp.</p>
@@ -578,8 +682,8 @@
 </div></div>
 <div class="kategorie" id="kat-abend"><h3><span class="icon">🌙</span>Abend</h3><div class="karten">
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">20</span><span class="budget">€€</span></div>
+<article class="karte" id="idee-20">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">20</button><span class="budget">€€</span></div>
   <h4>Nachtrodeln am Mittwoch</h4>
   <p class="wo">📍 Beleuchtete Rodelbahn Gaislachkogl; Rodel separat leihen.</p>
   <p>Die Bahn führt 7,3 km von der Mittelstation auf 2.170 m ins Tal auf 1.366 m; legt Startreihenfolge und Treffpunkt fest.</p>
@@ -588,8 +692,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/winter/tobogganing" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">21</span><span class="budget">€</span></div>
+<article class="karte" id="idee-21">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">21</button><span class="budget">€</span></div>
   <h4>Lenzenalm-Naturrodelbahn</h4>
   <p class="wo">📍 Naturrodelbahn Lenzenalm in Zwieselstein.</p>
   <p>Die 3,2 km lange Bahn ist eine eigene Rodeloption; lost die Abfahrtsreihenfolge aus und prüft vorher die Betriebstage.</p>
@@ -600,8 +704,8 @@
 </div></div>
 <div class="kategorie" id="kat-schlechtwetter"><h3><span class="icon">☁️</span>Schlechtwetter</h3><div class="karten">
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">22</span><span class="budget">€€€</span></div>
+<article class="karte" id="idee-22">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">22</button><span class="budget">€€€</span></div>
   <h4>007 ELEMENTS als Indoor-Ausflug</h4>
   <p class="wo">📍 007 ELEMENTS am Gaislachkogl; Besuch tagsüber.</p>
   <p>Am Drehort von SPECTRE arbeitet die Erlebniswelt mit Zeitslots; bildet kleine Teams, die danach ihr Lieblingsdetail vorstellen.</p>
@@ -610,8 +714,8 @@
   <p class="quelle"><a href="https://www.soelden.com/en/activities/excursion-destinations/007-elements/opening-hours" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">23</span><span class="budget">€€€</span></div>
+<article class="karte" id="idee-23">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">23</button><span class="budget">€€€</span></div>
   <h4>AQUA DOME als Wetter-Auszeit</h4>
   <p class="wo">📍 AQUA DOME in Längenfeld.</p>
   <p>Das Thermalwasser stammt aus 1.865 m Tiefe; im Thermendom sind 34–36 °C angegeben. Plant einen bewussten Erholungstag abseits der Piste.</p>
@@ -620,8 +724,8 @@
   <p class="quelle"><a href="https://www.aqua-dome.at/de/therme/" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">24</span><span class="budget">€€€</span></div>
+<article class="karte" id="idee-24">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">24</button><span class="budget">€€€</span></div>
   <h4>Geführte Schneeschuhwanderung</h4>
   <p class="wo">📍 Mit Guide über die Skischule Sölden-Hochsölden.</p>
   <p>Erlebt die Winterlandschaft zu Fuß; eine Person achtet aufs Tempo, eine auf den Weg und eine sammelt Fotomotive.</p>
@@ -630,8 +734,8 @@
   <p class="quelle"><a href="https://skischule-soelden.com/en/alternatives/snow-shoe-hiking/" target="_blank" rel="noopener">Link</a></p>
 </article>
 
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">25</span><span class="budget">€€€€</span></div>
+<article class="karte" id="idee-25">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">25</button><span class="budget">€€€€</span></div>
   <h4>Eisklettern mit Bergführer</h4>
   <p class="wo">📍 Eisfälle etwa bei Umhausen, Längenfeld oder Obergurgl.</p>
   <p>Geführte Einsteigerkurse inklusive Ausrüstung machen daraus ein intensives Gruppenerlebnis; nur bei passenden Eisbedingungen und mit Bergführer.</p>
@@ -698,6 +802,115 @@
       f.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
       box.appendChild(f);
     }
+  })();
+
+  // Kleiner Speicher für Einstellungen; funktioniert auch ohne (z. B. im privaten Modus)
+  function lies(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function schreib(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  var ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Schneefall an/aus
+  (function () {
+    var knopf = document.getElementById('schneeKnopf');
+    var box = document.querySelector('.schnee');
+    function setze(an) {
+      box.style.visibility = an ? 'visible' : 'hidden';
+      knopf.setAttribute('aria-pressed', an ? 'true' : 'false');
+      schreib('soelden-schnee', an ? '1' : '0');
+    }
+    setze(lies('soelden-schnee') !== '0');
+    knopf.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setze(knopf.getAttribute('aria-pressed') !== 'true');
+    });
+  })();
+
+  // Klick irgendwo: kleine Schneeflocken-Explosion
+  document.addEventListener('click', function (e) {
+    if (ruhig || e.target.closest('a, button, [role="button"]')) return;
+    for (var i = 0; i < 10; i++) {
+      var f = document.createElement('span');
+      f.className = 'klick-flocke';
+      f.textContent = '❄';
+      var w = (Math.PI * 2 * i) / 10, r = 40 + Math.random() * 50;
+      f.style.left = e.clientX + 'px';
+      f.style.top = e.clientY + 'px';
+      f.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
+      f.style.setProperty('--dx', Math.cos(w) * r + 'px');
+      f.style.setProperty('--dy', Math.sin(w) * r + 'px');
+      document.body.appendChild(f);
+      setTimeout(function (el) { el.remove(); }, 950, f);
+    }
+  });
+
+  // Ideen abhaken (wird im Browser gemerkt)
+  (function () {
+    var karten = document.querySelectorAll('.karte');
+    var zaehler = document.getElementById('zaehler');
+    var erledigt = [];
+    try { erledigt = JSON.parse(lies('soelden-erledigt') || '[]'); } catch (e) {}
+    function zeige() {
+      var n = document.querySelectorAll('.karte.erledigt').length;
+      zaehler.textContent = n + ' von ' + karten.length + ' erledigt' + (n === karten.length ? ' – Legenden! 🏆' : '');
+    }
+    karten.forEach(function (k) {
+      var knopf = k.querySelector('.nr');
+      if (erledigt.indexOf(k.id) > -1) { k.classList.add('erledigt'); knopf.setAttribute('aria-pressed', 'true'); }
+      knopf.addEventListener('click', function () {
+        var an = k.classList.toggle('erledigt');
+        knopf.setAttribute('aria-pressed', an ? 'true' : 'false');
+        var liste = Array.prototype.map.call(document.querySelectorAll('.karte.erledigt'), function (x) { return x.id; });
+        schreib('soelden-erledigt', JSON.stringify(liste));
+        zeige();
+      });
+    });
+    zeige();
+  })();
+
+  // Zufallsidee: würfelt eine noch nicht erledigte Idee aus
+  document.getElementById('zufall').addEventListener('click', function () {
+    var offen = document.querySelectorAll('.karte:not(.erledigt)');
+    if (!offen.length) { alert('Alles erledigt – ab zum Après! 🍻'); return; }
+    document.querySelectorAll('.gewinner').forEach(function (k) { k.classList.remove('gewinner'); });
+    var k = offen[Math.floor(Math.random() * offen.length)];
+    k.scrollIntoView({ behavior: ruhig ? 'auto' : 'smooth', block: 'center' });
+    void k.offsetWidth;
+    k.classList.add('gewinner');
+  });
+
+  // Countdown bis Weihnachten
+  (function () {
+    var el = document.getElementById('countdown');
+    var heute = new Date(); heute.setHours(0, 0, 0, 0);
+    var jahr = heute.getFullYear();
+    var ziel = new Date(jahr, 11, 24);
+    if (heute > new Date(jahr, 11, 26)) ziel = new Date(jahr + 1, 11, 24);
+    var tage = Math.round((ziel - heute) / 86400000);
+    el.textContent = tage > 0 ? '🎄 Noch ' + tage + (tage === 1 ? ' Tag' : ' Tage') + ' bis Weihnachten'
+                              : '🎄 Frohe Weihnachten!';
+    el.hidden = false;
+  })();
+
+  // Skifahrer-Überraschung: „ski“ tippen oder ⛷️ anklicken
+  (function () {
+    var puffer = '';
+    function fahr() {
+      if (ruhig || document.querySelector('.skifahrer')) return;
+      var s = document.createElement('div');
+      s.className = 'skifahrer';
+      s.textContent = '⛷️';
+      s.style.top = (10 + Math.random() * 20) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(function () { s.remove(); }, 3100);
+    }
+    var start = document.getElementById('skiStart');
+    start.addEventListener('click', fahr);
+    start.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fahr(); } });
+    document.addEventListener('keydown', function (e) {
+      if (e.key.length !== 1) return;
+      puffer = (puffer + e.key.toLowerCase()).slice(-3);
+      if (puffer === 'ski') { puffer = ''; fahr(); }
+    });
   })();
 </script>
 </body>

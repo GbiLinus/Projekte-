@@ -55,8 +55,8 @@ def ideas(text: str) -> str:
         badge = "ok" if rel.startswith("✅") else "warn"
         budget = fields.get("Budget", "").split(" – ")[0]
         out.append(f"""
-<article class="karte">
-  <div class="karte-kopf"><span class="nr">{int(num)}</span><span class="budget">{html.escape(budget)}</span></div>
+<article class="karte" id="idee-{int(num)}">
+  <div class="karte-kopf"><button class="nr" type="button" title="Als erledigt abhaken" aria-pressed="false">{int(num)}</button><span class="budget">{html.escape(budget)}</span></div>
   <h4>{html.escape(title.strip())}</h4>
   <p class="wo">📍 {inline(fields.get("Wo", ""))}</p>
   <p>{inline(fields.get("Warum speziell", ""))}</p>

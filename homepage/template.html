@@ -315,6 +315,103 @@
   }
   .checkliste a { color: var(--blau); }
 
+
+  /* ---------- Spielereien ---------- */
+  .nr { border: 0; cursor: pointer; font-family: inherit; transition: transform .15s ease, background .2s ease; }
+  .nr:hover { transform: scale(1.1); }
+  .karte.erledigt { opacity: .6; border-top-color: #2e8b57; }
+  .karte.erledigt .nr { background: #2e8b57; }
+  .karte.erledigt .nr { font-size: 0; }
+  .karte.erledigt .nr::after { content: "✓"; font-size: 1.1rem; }
+  .karte.erledigt h4 { text-decoration: line-through; }
+  .karte:hover { transform: translateY(-3px) rotate(-0.3deg); }
+  .karte { transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease; }
+  .karte.gewinner { animation: leuchten 1.2s ease-in-out 3; }
+  @keyframes leuchten {
+    50% { box-shadow: 0 0 0 6px var(--gold), 0 0 40px var(--gold); transform: scale(1.03); }
+  }
+
+  .spielzeug {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 28px;
+  }
+  .spielzeug button {
+    font: inherit;
+    font-weight: 700;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 22px;
+    cursor: pointer;
+    background: var(--navy);
+    color: var(--weiss);
+    box-shadow: 0 4px 14px rgba(11, 42, 85, .2);
+    transition: transform .15s ease;
+  }
+  .spielzeug button:hover { transform: translateY(-2px) rotate(-1deg); }
+  .spielzeug .zaehler { color: var(--soft); font-weight: 600; }
+
+  .countdown {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, .3);
+    font-weight: 600;
+    font-size: .95rem;
+  }
+
+  .schnee-knopf {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 60;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 0;
+    font-size: 1.4rem;
+    cursor: pointer;
+    background: var(--weiss);
+    box-shadow: 0 4px 16px rgba(11, 42, 85, .3);
+  }
+  .schnee-knopf[aria-pressed="false"] { opacity: .55; }
+
+  .klick-flocke {
+    position: fixed;
+    pointer-events: none;
+    z-index: 70;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(27, 95, 174, .7);
+    animation: platzen .9s ease-out forwards;
+  }
+  @keyframes platzen {
+    to { transform: translate(var(--dx), var(--dy)) rotate(180deg); opacity: 0; }
+  }
+
+  .skifahrer {
+    position: fixed;
+    left: -80px;
+    z-index: 80;
+    font-size: 3rem;
+    pointer-events: none;
+    animation: abfahrt 3s cubic-bezier(.5, 0, .7, 1) forwards;
+  }
+  @keyframes abfahrt {
+    0%   { transform: translate(0, 0) rotate(0); }
+    100% { transform: translate(calc(100vw + 160px), 45vh) rotate(20deg); }
+  }
+  .ski-hinweis { font-size: .8rem; opacity: .7; margin-top: 10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .karte.gewinner { animation: none; box-shadow: 0 0 0 6px var(--gold); }
+    .klick-flocke, .skifahrer { display: none; }
+  }
+
   footer {
     background: var(--navy);
     color: rgba(255, 255, 255, .75);
@@ -344,6 +441,7 @@
 <body>
 
 <div class="schnee" aria-hidden="true"></div>
+<button class="schnee-knopf" id="schneeKnopf" type="button" aria-pressed="true" title="Schneefall an/aus">❄️</button>
 
 <header class="hero">
   <div class="lichter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
@@ -356,10 +454,12 @@
     </ul>
   </nav>
   <div class="hero-text">
-    <div class="ski" aria-hidden="true">⛷️🎿❄️</div>
+    <div class="ski"><span id="skiStart" role="button" tabindex="0" aria-label="Skifahrer starten" style="cursor:pointer">⛷️</span>🎿❄️</div>
     <h1>Sölden – Wir kommen!</h1>
     <p>Skiurlaub im Ötztal zwischen Dezember und Februar: 25 besondere Ideen mit Plan B, eine Beispielwoche und alles, was wir vorher buchen müssen.</p>
     <a class="button" href="#ideen">Zu den 25 Ideen ❄</a>
+    <div class="countdown" id="countdown" hidden></div>
+    <p class="ski-hinweis">Tipp: Tippe irgendwo „ski“ ein oder klick auf ⛷️.</p>
   </div>
 </header>
 <svg class="huegel" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
@@ -370,6 +470,10 @@
   <section id="ideen">
     <h2>25 Ideen für Sölden</h2>
     <p class="unterzeile">✅ im Winter belegt · ⚠️ vorher prüfen oder reservieren · € bis €€€€ grobe Preisklasse. Jede Idee hat einen Plan B für Sturm, Nebel oder volle Hütten.</p>
+    <div class="spielzeug">
+      <button type="button" id="zufall">🎲 Was machen wir heute?</button>
+      <span class="zaehler" id="zaehler">0 von 25 erledigt</span>
+    </div>
     <nav class="sprung" aria-label="Kategorien">
       <a href="#kat-piste">⛷️ Piste</a>
       <a href="#kat-freeride">🏔️ Freeride</a>
@@ -423,6 +527,115 @@
       f.style.setProperty('--drift', (Math.random() * 120 - 60) + 'px');
       box.appendChild(f);
     }
+  })();
+
+  // Kleiner Speicher für Einstellungen; funktioniert auch ohne (z. B. im privaten Modus)
+  function lies(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function schreib(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  var ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Schneefall an/aus
+  (function () {
+    var knopf = document.getElementById('schneeKnopf');
+    var box = document.querySelector('.schnee');
+    function setze(an) {
+      box.style.visibility = an ? 'visible' : 'hidden';
+      knopf.setAttribute('aria-pressed', an ? 'true' : 'false');
+      schreib('soelden-schnee', an ? '1' : '0');
+    }
+    setze(lies('soelden-schnee') !== '0');
+    knopf.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setze(knopf.getAttribute('aria-pressed') !== 'true');
+    });
+  })();
+
+  // Klick irgendwo: kleine Schneeflocken-Explosion
+  document.addEventListener('click', function (e) {
+    if (ruhig || e.target.closest('a, button, [role="button"]')) return;
+    for (var i = 0; i < 10; i++) {
+      var f = document.createElement('span');
+      f.className = 'klick-flocke';
+      f.textContent = '❄';
+      var w = (Math.PI * 2 * i) / 10, r = 40 + Math.random() * 50;
+      f.style.left = e.clientX + 'px';
+      f.style.top = e.clientY + 'px';
+      f.style.fontSize = (0.8 + Math.random() * 0.8) + 'rem';
+      f.style.setProperty('--dx', Math.cos(w) * r + 'px');
+      f.style.setProperty('--dy', Math.sin(w) * r + 'px');
+      document.body.appendChild(f);
+      setTimeout(function (el) { el.remove(); }, 950, f);
+    }
+  });
+
+  // Ideen abhaken (wird im Browser gemerkt)
+  (function () {
+    var karten = document.querySelectorAll('.karte');
+    var zaehler = document.getElementById('zaehler');
+    var erledigt = [];
+    try { erledigt = JSON.parse(lies('soelden-erledigt') || '[]'); } catch (e) {}
+    function zeige() {
+      var n = document.querySelectorAll('.karte.erledigt').length;
+      zaehler.textContent = n + ' von ' + karten.length + ' erledigt' + (n === karten.length ? ' – Legenden! 🏆' : '');
+    }
+    karten.forEach(function (k) {
+      var knopf = k.querySelector('.nr');
+      if (erledigt.indexOf(k.id) > -1) { k.classList.add('erledigt'); knopf.setAttribute('aria-pressed', 'true'); }
+      knopf.addEventListener('click', function () {
+        var an = k.classList.toggle('erledigt');
+        knopf.setAttribute('aria-pressed', an ? 'true' : 'false');
+        var liste = Array.prototype.map.call(document.querySelectorAll('.karte.erledigt'), function (x) { return x.id; });
+        schreib('soelden-erledigt', JSON.stringify(liste));
+        zeige();
+      });
+    });
+    zeige();
+  })();
+
+  // Zufallsidee: würfelt eine noch nicht erledigte Idee aus
+  document.getElementById('zufall').addEventListener('click', function () {
+    var offen = document.querySelectorAll('.karte:not(.erledigt)');
+    if (!offen.length) { alert('Alles erledigt – ab zum Après! 🍻'); return; }
+    document.querySelectorAll('.gewinner').forEach(function (k) { k.classList.remove('gewinner'); });
+    var k = offen[Math.floor(Math.random() * offen.length)];
+    k.scrollIntoView({ behavior: ruhig ? 'auto' : 'smooth', block: 'center' });
+    void k.offsetWidth;
+    k.classList.add('gewinner');
+  });
+
+  // Countdown bis Weihnachten
+  (function () {
+    var el = document.getElementById('countdown');
+    var heute = new Date(); heute.setHours(0, 0, 0, 0);
+    var jahr = heute.getFullYear();
+    var ziel = new Date(jahr, 11, 24);
+    if (heute > new Date(jahr, 11, 26)) ziel = new Date(jahr + 1, 11, 24);
+    var tage = Math.round((ziel - heute) / 86400000);
+    el.textContent = tage > 0 ? '🎄 Noch ' + tage + (tage === 1 ? ' Tag' : ' Tage') + ' bis Weihnachten'
+                              : '🎄 Frohe Weihnachten!';
+    el.hidden = false;
+  })();
+
+  // Skifahrer-Überraschung: „ski“ tippen oder ⛷️ anklicken
+  (function () {
+    var puffer = '';
+    function fahr() {
+      if (ruhig || document.querySelector('.skifahrer')) return;
+      var s = document.createElement('div');
+      s.className = 'skifahrer';
+      s.textContent = '⛷️';
+      s.style.top = (10 + Math.random() * 20) + 'vh';
+      document.body.appendChild(s);
+      setTimeout(function () { s.remove(); }, 3100);
+    }
+    var start = document.getElementById('skiStart');
+    start.addEventListener('click', fahr);
+    start.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fahr(); } });
+    document.addEventListener('keydown', function (e) {
+      if (e.key.length !== 1) return;
+      puffer = (puffer + e.key.toLowerCase()).slice(-3);
+      if (puffer === 'ski') { puffer = ''; fahr(); }
+    });
   })();
 </script>
 </body>
