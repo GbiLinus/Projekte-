@@ -6,5 +6,6 @@ Sammlung aller Projekte, die mit Claude erstellt wurden. Jedes Projekt liegt in 
 |---|---|---|---|
 | Sölden-Skiurlaub | [`soelden-skiurlaub/`](soelden-skiurlaub/) | 24.09.2026 | 25 Ideen für einen Skiurlaub in Sölden (Freunde, Dez–Feb, Premium), mit Plan B, Beispielwoche und Buchungs-Checkliste. Erstellt mit Claudex Loop: Claude plante, Codex prüfte und baute, Claude kontrollierte. |
 | mein-plugin | [`mein-plugin/`](mein-plugin/) | 24.09.2026 | Beispiel-Plugin für Claude Code (Befehl, Skill, Agent, Hook). Installation: `/plugin marketplace add GbiLinus/Projekte-` und `/plugin install mein-plugin@gbilinus-plugins`. |
+| Homepage | [`homepage/`](homepage/) | 24.09.2026 | Einfache persönliche Website mit Foto als Hintergrund. Live (nach Aktivierung von GitHub Pages): https://gbilinus.github.io/Projekte-/homepage/ |
 
 Nicht hier: Die Kommunalwahl 2026 ist ein eigenes Projekt im Repository `kommunalwahl-2026`.
