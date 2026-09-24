@@ -1,0 +1,18 @@
+{
+  "name": "gbilinus-plugins",
+  "owner": {
+    "name": "GbiLinus"
+  },
+  "metadata": {
+    "description": "Eigene Claude-Code-Plugins von GbiLinus",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "mein-plugin",
+      "source": "./mein-plugin",
+      "description": "Start-Plugin mit Beispiel-Befehl, Skill, Agent und Hook",
+      "version": "0.1.0"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "mein-plugin",
+  "version": "0.1.0",
+  "description": "Start-Plugin mit Beispiel-Befehl, Skill, Agent und Hook",
+  "author": {
+    "name": "GbiLinus"
+  },
+  "keywords": ["starter", "beispiel"]
+}

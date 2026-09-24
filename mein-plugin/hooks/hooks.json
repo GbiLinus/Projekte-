@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'mein-plugin ist aktiv. Befehl: /mein-plugin:hallo'"
+          }
+        ]
+      }
+    ]
+  }
+}
