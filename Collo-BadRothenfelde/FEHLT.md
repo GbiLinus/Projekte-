@@ -5,7 +5,7 @@ Stand: 29.09.2026. Alles, was nicht sicher belegt war, ist **nicht** auf der Web
 ## Fehlt ganz
 
 1. **Impressum** (Pflicht nach § 5 DDG): Inhaber/Betreiber, Rechtsform, ladungsfähige Anschrift, ggf. USt-IdNr. Nirgends online gefunden.
-2. **Datenschutzerklärung** (Pflicht, v. a. wegen Reservierungslink zu resmio, Schriften von Bunny Fonts und Links zu Facebook/Instagram).
+2. **Datenschutzerklärung** (Pflicht, v. a. wegen Reservierungslink zu resmio und Links zu Facebook/Instagram).
 3. **Fotos**: Gerichte, Innenraum, Bar, Außenansicht, Küchenchef. Die Facebook- und Instagram-Seiten sind ohne Login nicht auslesbar, und fremde Fotos dürfen nicht einfach übernommen werden. Die Seite ist deshalb bewusst rein typografisch gestaltet.
 4. **Logo** in Vektorform (SVG/PDF). Aktuell ist „Collo“ nur als Schriftzug gesetzt.
 5. **Getränkekarte** (Wein, Aperitivo, Cocktails, Bier, Softdrinks, Preise). Auf der eigenen Seite nur Speisen.

@@ -13,7 +13,7 @@ Live (nach Merge in `main`): https://gbilinus.github.io/Projekte-/Collo-BadRothe
 | `build.py` | Baut `index.html` aus Template und Karte |
 | `style.css` | Gestaltung |
 | `main.js` | „Jetzt geöffnet?“-Anzeige, heutiger Tag, aktive Kategorie |
-| Schriften | Bodoni Moda und Karla über Bunny Fonts (EU, ohne Google) |
+| `fonts/` | Bodoni Moda und Karla, lokal (keine externen Server, DSGVO) |
 | `FEHLT.md` | Was noch fehlt oder unsicher ist |
 
 Karte oder Texte ändern: `menu.py` bzw. `template.html` bearbeiten, dann
